@@ -1,0 +1,44 @@
+#This algorithm creates synthetic data that is designed to be read by a model
+
+import pandas as pd
+import numpy as np#This algorithm creates synthetic data that is designed to be read by a model
+
+import pandas as pd
+import numpy as np
+
+# Set a random for reproducibility
+np.random.seed(42)
+
+# Number of samples
+n_samples = 500
+
+# Generate synthetic data
+data = {
+    'Age': np.random.randint(5, 80, size=n_samples),
+    'Gender': np.random.choice(['Male', 'Female'], size=n_samples),
+    'Number of Cavities': np.random.randint(0, 5, size=n_samples),
+    'Plaque Score': np.random.randint(0, 11, size=n_samples),
+    'Fluoride Use': np.random.choice(['Yes', 'No'], size=n_samples),
+    'Dental Visits': np.random.randint(1, 6, size=n_samples),
+}
+
+# Create a DataFrame
+df = pd.DataFrame(data)
+
+# Define simple rule for the target variable
+def has_caries(row):
+    if row['Number of Cavities'] > 1 or row['Plaque Score'] > 5:
+        return 'Yes'
+    return 'No'
+
+# Apply the rule to generate the target variable
+df['Caries Present'] = df.apply(has_caries, axis=1)
+
+# Encode categorical features
+df_encoded = pd.get_dummies(df, columns=['Gender', 'Fluoride Use'])
+
+# Display the first few rows of the dataset
+print(df_encoded.head())
+
+# Save the dataset to a CSV file (optional)
+df_encoded.to_csv('fake_caries_data.csv', index=False)
